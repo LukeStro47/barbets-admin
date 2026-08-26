@@ -1,5 +1,4 @@
 import { requireAdmin } from '@/lib/requireAdmin';
-import { AdminNav } from '@/components/layout/AdminNav';
 import { Card } from '@/components/ui/Card';
 import { AdminBroadcastForm } from '@/components/admin-tools/AdminBroadcastForm';
 import { CreatePublicGroupForm, ManageModeratorsPanel } from '@/components/admin-tools/AdminPublicGroupsForm';
@@ -9,7 +8,9 @@ import type { PipelineHealth, PipelineSetting, QrScanTotal, GroupOption, GroupMe
 
 /** Ported from the main app's app/(app)/admin/page.tsx, minus the platform stat tiles (moved to
  *  this repo's own overview page, "/"). Everything else — broadcast, public group creation,
- *  moderator management, pipeline toggles, QR totals — is unchanged, same RPCs. */
+ *  moderator management, pipeline toggles, QR totals — is unchanged, same RPCs. Laid out as a
+ *  2-column desktop grid rather than one stacked mobile column; the moderators list spans full
+ *  width since it can run long. */
 export default async function AdminToolsPage() {
   const { supabase } = await requireAdmin();
 
@@ -37,11 +38,10 @@ export default async function AdminToolsPage() {
   }
 
   return (
-    <>
-      <AdminNav current="/admin-tools" />
-      <main className="mx-auto max-w-lg space-y-6 px-5 py-8">
-        <h1 className="font-display text-2xl font-extrabold tracking-[-0.02em] text-espresso-950">Admin tools</h1>
+    <div className="space-y-6">
+      <h1 className="font-display text-2xl font-extrabold tracking-[-0.02em] text-espresso-950">Admin tools</h1>
 
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="space-y-3">
           <div>
             <h2 className="font-semibold text-espresso-800">Send a test notification</h2>
@@ -67,23 +67,25 @@ export default async function AdminToolsPage() {
           </div>
           <CreatePublicGroupForm />
         </Card>
+      </div>
 
-        <Card className="space-y-3">
-          <div>
-            <h2 className="font-semibold text-espresso-800">Public groups &amp; moderators</h2>
-            <p className="text-sm text-espresso-500">A moderator can hand-create a market and void a bad one, without full owner access.</p>
+      <Card className="space-y-3">
+        <div>
+          <h2 className="font-semibold text-espresso-800">Public groups &amp; moderators</h2>
+          <p className="text-sm text-espresso-500">A moderator can hand-create a market and void a bad one, without full owner access.</p>
+        </div>
+        {(publicGroups ?? []).length === 0 ? (
+          <p className="text-sm text-espresso-400">No public groups yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {(publicGroups ?? []).map((g) => (
+              <ManageModeratorsPanel key={g.id} group={{ id: g.id, name: g.name, category: g.category, memberCount: g.member_count }} />
+            ))}
           </div>
-          {(publicGroups ?? []).length === 0 ? (
-            <p className="text-sm text-espresso-400">No public groups yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {(publicGroups ?? []).map((g) => (
-                <ManageModeratorsPanel key={g.id} group={{ id: g.id, name: g.name, category: g.category, memberCount: g.member_count }} />
-              ))}
-            </div>
-          )}
-        </Card>
+        )}
+      </Card>
 
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="space-y-3">
           <div>
             <h2 className="font-semibold text-espresso-800">Auto-generated market pipelines</h2>
@@ -108,7 +110,7 @@ export default async function AdminToolsPage() {
           </div>
           <QrScanTotalsCard totals={qrScanTotals ?? []} />
         </Card>
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
