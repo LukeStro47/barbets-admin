@@ -14,8 +14,9 @@ export interface AuthActionState {
 export async function signIn(_prevState: AuthActionState | null, formData: FormData): Promise<AuthActionState | null> {
   const email = String(formData.get('email'));
   const password = String(formData.get('password'));
+  const captchaToken = String(formData.get('cf-turnstile-response') || '');
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({ email, password, options: { captchaToken } });
   if (error) return { error: error.message };
   redirect('/');
 }
