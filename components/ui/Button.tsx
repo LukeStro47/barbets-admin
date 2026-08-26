@@ -1,0 +1,30 @@
+import type { ButtonHTMLAttributes } from 'react';
+import { cn } from '@/lib/cn';
+
+type Variant = 'primary' | 'outline' | 'danger';
+type Size = 'sm' | 'md';
+
+const variantClasses: Record<Variant, string> = {
+  primary: 'bg-espresso-800 text-paper-white hover:bg-espresso-900 disabled:bg-espresso-300',
+  outline: 'border border-espresso-200 text-espresso-800 hover:bg-espresso-50 disabled:text-espresso-300',
+  danger: 'bg-danger-500 text-paper-white hover:bg-danger-700 disabled:bg-danger-100',
+};
+
+const sizeClasses: Record<Size, string> = {
+  sm: 'px-3 py-1.5 text-sm font-semibold rounded-full',
+  md: 'px-4 py-2.5 text-sm font-semibold rounded-full',
+};
+
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  className,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size }) {
+  return (
+    <button
+      className={cn('whitespace-nowrap transition-colors disabled:cursor-not-allowed', variantClasses[variant], sizeClasses[size], className)}
+      {...props}
+    />
+  );
+}
