@@ -3,9 +3,12 @@
 import { useEffect, useState, useTransition } from 'react';
 import { sendAdminBroadcast } from '@/lib/actions/admin-tools';
 import { Button } from '@/components/ui/Button';
+import { BellIcon } from '@/components/ui/icons';
 
 const inputClasses =
-  'w-full rounded-xl border border-espresso-200 bg-paper-white px-4 py-2.5 text-espresso-900 focus:border-honey-500 focus:outline-none focus:ring-2 focus:ring-honey-200';
+  'w-full rounded-xl border border-espresso-200 bg-paper-dim px-3.5 py-[11px] text-[15px] text-espresso-900 focus:border-honey-500 focus:outline-none focus:ring-2 focus:ring-honey-200';
+const selectClasses = `${inputClasses} font-semibold`;
+const labelClasses = 'block text-[11px] font-bold tracking-[0.1em] text-espresso-400 uppercase';
 
 interface GroupOption {
   id: string;
@@ -118,36 +121,42 @@ export function AdminBroadcastForm({ groups }: { groups: GroupOption[] }) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-4">
       {error && <p className="text-sm text-danger-700">{error}</p>}
       {sent && <p className="text-sm font-semibold text-success-700">Queued — lands within a minute.</p>}
 
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Group</label>
-        <select value={groupId} onChange={(e) => setGroupId(e.target.value)} className={inputClasses}>
-          {groups.map((g) => (
-            <option key={g.id} value={g.id}>
-              {g.name} ({g.memberCount} member{g.memberCount === 1 ? '' : 's'})
-            </option>
-          ))}
-        </select>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Group</label>
+          <select value={groupId} onChange={(e) => setGroupId(e.target.value)} className={selectClasses}>
+            {groups.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name} ({g.memberCount} member{g.memberCount === 1 ? '' : 's'})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Send to</label>
+          <select value={recipient} onChange={(e) => setRecipient(e.target.value)} className={selectClasses}>
+            <option value="">Everyone in the group</option>
+            {(group?.members ?? []).map((m) => (
+              <option key={m.userId} value={m.userId}>
+                @{m.nickname}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Send to</label>
-        <select value={recipient} onChange={(e) => setRecipient(e.target.value)} className={inputClasses}>
-          <option value="">Everyone in the group</option>
-          {(group?.members ?? []).map((m) => (
-            <option key={m.userId} value={m.userId}>
-              @{m.nickname}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Template</label>
-        <select value={templateIndex} onChange={(e) => setTemplateIndex(Number(e.target.value))} className={inputClasses}>
+      <div className="flex flex-col gap-1.5">
+        <label className={labelClasses}>Template</label>
+        <select
+          value={templateIndex}
+          onChange={(e) => setTemplateIndex(Number(e.target.value))}
+          className={`${selectClasses} border-honey-500 bg-honey-50`}
+        >
           {TEMPLATES.map((t, i) => (
             <option key={t.label} value={i}>
               {t.label}
@@ -156,14 +165,14 @@ export function AdminBroadcastForm({ groups }: { groups: GroupOption[] }) {
         </select>
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Title</label>
+      <div className="flex flex-col gap-1.5">
+        <label className={labelClasses}>Title</label>
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} className={inputClasses} />
       </div>
 
       {isCustom ? (
-        <div className="space-y-1.5">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Body</label>
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Body</label>
           <textarea
             value={customBody}
             onChange={(e) => setCustomBody(e.target.value)}
@@ -176,10 +185,10 @@ export function AdminBroadcastForm({ groups }: { groups: GroupOption[] }) {
       ) : (
         <>
           {placeholders.length > 0 && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {placeholders.map((p) => (
-                <label key={p} className="space-y-1">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-espresso-500">{PLACEHOLDER_LABELS[p] ?? p}</span>
+                <label key={p} className="flex flex-col gap-1.5">
+                  <span className={labelClasses}>{PLACEHOLDER_LABELS[p] ?? p}</span>
                   <input
                     value={fillins[p] ?? ''}
                     onChange={(e) => setFillins((prev) => ({ ...prev, [p]: e.target.value }))}
@@ -189,14 +198,19 @@ export function AdminBroadcastForm({ groups }: { groups: GroupOption[] }) {
               ))}
             </div>
           )}
-          <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wide text-espresso-500">Preview</span>
-            <p className="rounded-xl bg-espresso-50 px-4 py-3 text-sm text-espresso-700">{assembledBody}</p>
+          <div className="flex gap-3 rounded-2xl bg-[linear-gradient(158deg,#3b2a20,#1c130d)] p-4">
+            <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[9px] bg-[rgba(232,163,61,0.18)] text-honey-500">
+              <BellIcon className="h-[18px] w-[18px]" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[13.5px] font-bold text-paper-white">{group?.name}</span>
+              <span className="block text-[13.5px] leading-[1.45] text-espresso-100">{assembledBody}</span>
+            </span>
           </div>
         </>
       )}
 
-      <Button type="button" disabled={isPending || !title.trim() || !bodyReady} onClick={submit} className="w-full">
+      <Button type="button" variant="accent" size="lg" disabled={isPending || !title.trim() || !bodyReady} onClick={submit} className="w-full">
         {isPending ? 'Sending…' : 'Send broadcast'}
       </Button>
     </div>

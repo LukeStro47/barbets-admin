@@ -28,5 +28,5 @@ export function TurnstileField({ resetKey }: { resetKey?: unknown }) {
 
   if (!SITE_KEY) return null;
 
-  return <Turnstile ref={ref} siteKey={SITE_KEY} options={{ appearance: 'interaction-only', size: 'flexible' }} />;
+  return <Turnstile ref={ref} siteKey={SITE_KEY} options={{ appearance: 'interaction-only', size: 'flexible', theme: 'dark' }} />;
 }

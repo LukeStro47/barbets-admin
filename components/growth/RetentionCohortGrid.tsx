@@ -52,12 +52,12 @@ export function RetentionCohortGrid({ rows }: { rows: RetentionCohortRow[] }) {
               <td className="px-1 text-espresso-500">{sizeByCohort.get(week)}</td>
               {Array.from({ length: maxOffset + 1 }, (_, offset) => {
                 const cell = byCell.get(`${week}:${offset}`);
-                if (!cell) return <td key={offset} className="rounded bg-espresso-50/40 px-1 py-1.5 text-center text-espresso-200">—</td>;
+                if (!cell) return <td key={offset} className="rounded-[5px] bg-espresso-50/40 px-1 py-[7px] text-center text-espresso-200">—</td>;
                 const pct = cell.cohort_size > 0 ? Math.round((cell.active_users / cell.cohort_size) * 100) : 0;
                 return (
                   <td
                     key={offset}
-                    className="rounded px-1 py-1.5 text-center font-semibold"
+                    className="rounded-[5px] px-1 py-[7px] text-center font-bold"
                     style={{ backgroundColor: rampColor(pct), color: textColorFor(pct) }}
                     title={`${cell.active_users} of ${cell.cohort_size} active`}
                   >

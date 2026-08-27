@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-display: ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 
   /* Same palette as the main app (app/globals.css there) for brand consistency, trimmed to the
      tokens this staff tool actually uses — no animation keyframes, no PWA-specific variables. */
   --color-paper: #faf6ef;
+  --color-paper-dim: #f3ecdf;
   --color-paper-white: #fffdf9;
 
   --color-espresso-950: #1c130d;
@@ -21,14 +22,19 @@
   --color-espresso-100: #e4d8cc;
   --color-espresso-50: #f2eae1;
 
+  --color-honey-900: #7a4f0f;
+  --color-honey-800: #925e13;
   --color-honey-700: #ac6f18;
   --color-honey-600: #c7841f;
   --color-honey-500: #e8a33d;
   --color-honey-400: #edb35c;
+  --color-honey-300: #f1c480;
   --color-honey-200: #f6d8a8;
   --color-honey-100: #fae7cb;
+  --color-honey-50: #fdf3e6;
 
   --color-success-700: #4f6b41;
+  --color-success-500: #6b8f5a;
   --color-success-100: #e9f0e3;
   --color-danger-700: #96392a;
   --color-danger-500: #c1503d;

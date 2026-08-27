@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createPublicGroup, assignGroupModerator, listGroupModeratorCandidates, type ModeratorCandidate } from '@/lib/actions/admin-tools';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { Switch } from '@/components/ui/Switch';
 import { COMMON_TIMEZONES, friendlyTimezoneName } from '@/lib/timezone';
 
 function capitalize(s: string): string {
@@ -12,7 +13,9 @@ function capitalize(s: string): string {
 }
 
 const inputClasses =
-  'w-full rounded-xl border border-espresso-200 bg-paper-white px-4 py-2.5 text-espresso-900 focus:border-honey-500 focus:outline-none focus:ring-2 focus:ring-honey-200';
+  'w-full rounded-xl border border-espresso-200 bg-paper-dim px-3.5 py-[11px] text-[15px] text-espresso-900 focus:border-honey-500 focus:outline-none focus:ring-2 focus:ring-honey-200';
+const selectClasses = `${inputClasses} font-semibold`;
+const labelClasses = 'block text-[11px] font-bold tracking-[0.1em] text-espresso-400 uppercase';
 
 export interface PublicGroupRow {
   id: string;
@@ -69,7 +72,7 @@ export function CreatePublicGroupForm() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-4">
       {error && <p className="text-sm text-danger-700">{error}</p>}
       {unresolvedEmails && (
         <p className="text-sm text-danger-700">
@@ -77,21 +80,21 @@ export function CreatePublicGroupForm() {
         </p>
       )}
 
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Group name</label>
+      <div className="flex flex-col gap-1.5">
+        <label className={labelClasses}>Group name</label>
         <input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} className={inputClasses} placeholder="WVU" />
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="space-y-1.5">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Category</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value as 'generic' | 'campus')} className={inputClasses}>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Category</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value as 'generic' | 'campus')} className={selectClasses}>
             <option value="generic">Generic</option>
             <option value="campus">Campus</option>
           </select>
         </div>
-        <div className="space-y-1.5">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Token allocation</label>
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Tokens</label>
           <input
             type="text"
             inputMode="numeric"
@@ -100,23 +103,20 @@ export function CreatePublicGroupForm() {
             className={inputClasses}
           />
         </div>
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Time zone</label>
+          <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className={selectClasses}>
+            {COMMON_TIMEZONES.map((tz) => (
+              <option key={tz} value={tz}>
+                {friendlyTimezoneName(tz)}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Time zone</label>
-        <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className={inputClasses}>
-          {COMMON_TIMEZONES.map((tz) => (
-            <option key={tz} value={tz}>
-              {friendlyTimezoneName(tz)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">
-          Moderator emails (assigned instantly, no invite needed)
-        </label>
+      <div className="flex flex-col gap-1.5">
+        <label className={labelClasses}>Moderator emails</label>
         <textarea
           value={moderatorEmails}
           onChange={(e) => setModeratorEmails(e.target.value)}
@@ -124,30 +124,27 @@ export function CreatePublicGroupForm() {
           placeholder="one@wvu.edu, another@wvu.edu"
           className={inputClasses}
         />
-        <p className="text-xs text-espresso-400">
-          Each has to already have a Barbets account. They&apos;re added as an active member with a moderator role right away and get a
-          push about it — no join step.
+        <p className="text-[12.5px] leading-[1.55] text-espresso-400">
+          Assigned instantly, no invite needed. Each has to already have a Barbets account, added as an active member with a moderator
+          role right away, with a push about it.
         </p>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-espresso-700">
-        <input
-          type="checkbox"
-          checked={selfModerate}
-          onChange={(e) => setSelfModerate(e.target.checked)}
-          className="h-4 w-4 shrink-0 rounded border-espresso-300 text-honey-600 focus:ring-honey-400"
-        />
-        I&apos;ll moderate this group too
+      <label className="flex items-center justify-between gap-3 rounded-2xl bg-paper-dim px-3.5 py-3">
+        <span className="text-[14.5px] font-semibold text-espresso-800">I&apos;ll moderate this group too</span>
+        <Switch checked={selfModerate} onChange={() => setSelfModerate((v) => !v)} />
       </label>
       {selfModerate && (
-        <div className="space-y-1.5">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Your nickname here</label>
+        <div className="flex flex-col gap-1.5">
+          <label className={labelClasses}>Your nickname here</label>
           <input value={nickname} onChange={(e) => setNickname(e.target.value.toLowerCase())} maxLength={20} className={inputClasses} />
         </div>
       )}
 
       <Button
         type="button"
+        variant="accent"
+        size="lg"
         disabled={isPending || !name.trim() || (selfModerate && !nickname.trim())}
         onClick={submit}
         className="w-full"
@@ -166,15 +163,18 @@ export function ManageModeratorsPanel({ group }: { group: PublicGroupRow }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-between gap-2 rounded-xl border border-espresso-100 p-3 text-left"
+        className="flex w-full items-center gap-3 rounded-2xl bg-paper-dim p-3.5 text-left"
       >
-        <span>
-          <span className="block text-sm font-semibold text-espresso-800">{group.name}</span>
-          <span className="block text-xs text-espresso-400">
-            {capitalize(group.category)} · {group.memberCount} member{group.memberCount === 1 ? '' : 's'}
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] bg-espresso-800 text-[15px] font-extrabold text-honey-500">
+          {group.name.charAt(0).toUpperCase()}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[14.5px] font-bold text-espresso-900">{group.name}</span>
+          <span className="block text-[12.5px] text-espresso-400">
+            {capitalize(group.category)} &middot; {group.memberCount} member{group.memberCount === 1 ? '' : 's'}
           </span>
         </span>
-        <span className="shrink-0 text-xs font-semibold text-honey-700">Manage</span>
+        <span className="shrink-0 text-[12.5px] font-bold text-honey-700">Manage</span>
       </button>
 
       {open && <ManageModeratorsModal group={group} onClose={() => setOpen(false)} />}
@@ -252,12 +252,7 @@ function ManageModeratorsModal({ group, onClose }: { group: PublicGroupRow; onCl
 
       <div className="space-y-1.5">
         <label className="block text-xs font-semibold uppercase tracking-wide text-espresso-500">Add a moderator</label>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by nickname…"
-          className="w-full rounded-xl border border-espresso-200 bg-paper-white px-4 py-2.5 text-espresso-900 focus:border-honey-500 focus:outline-none focus:ring-2 focus:ring-honey-200"
-        />
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by nickname…" className={inputClasses} />
         {query.trim() && (
           <div className="divide-y divide-espresso-50 rounded-xl border border-espresso-100">
             {searchResults.length === 0 ? (

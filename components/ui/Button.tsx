@@ -1,11 +1,12 @@
 import type { ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
-type Variant = 'primary' | 'outline' | 'danger';
-type Size = 'sm' | 'md';
+type Variant = 'primary' | 'accent' | 'outline' | 'danger';
+type Size = 'sm' | 'md' | 'lg' | 'xl';
 
 const variantClasses: Record<Variant, string> = {
   primary: 'bg-espresso-800 text-paper-white hover:bg-espresso-900 disabled:bg-espresso-300',
+  accent: 'bg-honey-500 text-espresso-900 hover:bg-honey-600 disabled:bg-honey-200',
   outline: 'border border-espresso-200 text-espresso-800 hover:bg-espresso-50 disabled:text-espresso-300',
   danger: 'bg-danger-500 text-paper-white hover:bg-danger-700 disabled:bg-danger-100',
 };
@@ -13,6 +14,10 @@ const variantClasses: Record<Variant, string> = {
 const sizeClasses: Record<Size, string> = {
   sm: 'px-3 py-1.5 text-sm font-semibold rounded-full',
   md: 'px-4 py-2.5 text-sm font-semibold rounded-full',
+  /** The full-width form submit buttons on Admin tools (broadcast, create public group). */
+  lg: 'px-6 py-3.5 text-[15px] font-bold rounded-full',
+  /** The one CTA on a full-bleed screen (login). */
+  xl: 'px-6 py-4 text-[17px] font-bold rounded-full',
 };
 
 export function Button({

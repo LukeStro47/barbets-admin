@@ -15,16 +15,16 @@ export function QrScanTotalsCard({ totals }: { totals: QrScanTotal[] }) {
   }
 
   return (
-    <div className="divide-y divide-espresso-50 rounded-xl border border-espresso-100">
+    <div className="flex flex-col gap-2">
       {totals.map((t) => (
-        <div key={t.batch} className="flex items-center justify-between gap-3 px-3 py-2.5">
-          <div>
-            <p className="text-sm font-semibold text-espresso-800">/go/{t.batch}</p>
-            <p className="text-xs text-espresso-400">
+        <div key={t.batch} className="flex items-center gap-4 rounded-2xl bg-paper-dim px-4 py-3.5">
+          <div className="min-w-0 flex-1">
+            <p className="text-[14.5px] font-bold text-espresso-900">/go/{t.batch}</p>
+            <p className="text-[12.5px] text-espresso-400">
               {t.android_count} Android, {t.ios_count} iOS, {t.other_count} other &middot; last {formatAgo(t.last_scanned_at)}
             </p>
           </div>
-          <p className="font-display text-xl font-bold text-espresso-900">{t.total_count}</p>
+          <p className="text-2xl leading-none font-extrabold tracking-[-0.025em] text-espresso-950">{t.total_count}</p>
         </div>
       ))}
     </div>
