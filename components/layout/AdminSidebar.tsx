@@ -36,7 +36,7 @@ export function AdminSidebar({ email, pipelines }: { email: string; pipelines: S
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-dvh w-[248px] shrink-0 flex-col bg-espresso-900">
+    <aside className="flex h-full w-[248px] shrink-0 flex-col overflow-y-auto bg-espresso-900">
       <div className="flex items-center gap-2.5 px-[22px] pt-[26px] pb-6">
         <Image src="/barbets-mono-white.png" alt="" width={30} height={30} className="block" />
         <span className="flex flex-col leading-[1.1]">

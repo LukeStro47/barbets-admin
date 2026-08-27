@@ -28,9 +28,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   });
 
   return (
-    <div className="flex min-h-dvh">
+    <div className="flex h-dvh overflow-hidden">
       <AdminSidebar email={user.email ?? ''} pipelines={pipelines} />
-      <main className="min-w-0 flex-1 overflow-x-hidden px-10 pt-8 pb-10">
+      <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-10 pt-8 pb-10">
         <div className="mx-auto flex max-w-[1400px] flex-col gap-[22px]">{children}</div>
       </main>
     </div>
