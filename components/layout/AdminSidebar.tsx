@@ -4,12 +4,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/lib/actions/auth';
-import { BarChartIcon, SettingsIcon, SignOutIcon, TargetIcon } from '@/components/ui/icons';
+import { BarChartIcon, GroupsIcon, SettingsIcon, SignOutIcon, TargetIcon, UsersIcon } from '@/components/ui/icons';
 import type { PipelineStatus } from '@/lib/pipelineStatus';
 
 const LINKS = [
   { href: '/', label: 'Overview', Icon: TargetIcon },
   { href: '/growth', label: 'Growth', Icon: BarChartIcon },
+  { href: '/groups', label: 'Groups', Icon: GroupsIcon },
+  { href: '/users', label: 'Users', Icon: UsersIcon },
   { href: '/admin-tools', label: 'Admin tools', Icon: SettingsIcon },
 ];
 
