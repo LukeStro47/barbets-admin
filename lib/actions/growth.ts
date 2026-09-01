@@ -53,3 +53,44 @@ export async function listLifecycleEventTotals(days = 30): Promise<ActionResult<
   if (error) return { error: friendlyMessage(toActionError(error)) };
   return { data: (data ?? []) as LifecycleEventTotal[] };
 }
+
+export interface PhotoProofWeek {
+  week: string;
+  resolved_markets: number;
+  with_photo: number;
+  photo_rate: number | null;
+}
+
+export async function listPhotoProofUsage(days = 90): Promise<ActionResult<PhotoProofWeek[]>> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('admin_photo_proof_usage', { p_days: days });
+  if (error) return { error: friendlyMessage(toActionError(error)) };
+  return { data: (data ?? []) as PhotoProofWeek[] };
+}
+
+export interface SeasonLengthRow {
+  period_start: string;
+  season_length: string;
+  season_count: number;
+}
+
+export async function listSeasonLengthDistribution(weeks = 26): Promise<ActionResult<SeasonLengthRow[]>> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('admin_season_length_distribution', { p_weeks: weeks });
+  if (error) return { error: friendlyMessage(toActionError(error)) };
+  return { data: (data ?? []) as SeasonLengthRow[] };
+}
+
+export interface SettingsUpdateWeek {
+  week: string;
+  updates_total: number;
+  updates_basic: number;
+  updates_advanced: number;
+}
+
+export async function listSettingsUpdateFrequency(days = 90): Promise<ActionResult<SettingsUpdateWeek[]>> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('admin_settings_update_frequency', { p_days: days });
+  if (error) return { error: friendlyMessage(toActionError(error)) };
+  return { data: (data ?? []) as SettingsUpdateWeek[] };
+}

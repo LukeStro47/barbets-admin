@@ -1,19 +1,33 @@
 import { SignupsChart } from '@/components/growth/SignupsChart';
 import { WauMauChart } from '@/components/growth/WauMauChart';
 import { RetentionCohortGrid } from '@/components/growth/RetentionCohortGrid';
+import { PhotoProofUsageChart } from '@/components/growth/PhotoProofUsageChart';
+import { SeasonLengthTrendChart } from '@/components/growth/SeasonLengthTrendChart';
+import { SettingsUpdateFrequencyChart } from '@/components/growth/SettingsUpdateFrequencyChart';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { requireAdmin } from '@/lib/requireAdmin';
 import { formatTokens } from '@/lib/formatNumber';
-import { listSignupsPerDay, listWauMau, listRetentionCohorts, listLifecycleEventTotals } from '@/lib/actions/growth';
+import {
+  listSignupsPerDay,
+  listWauMau,
+  listRetentionCohorts,
+  listLifecycleEventTotals,
+  listPhotoProofUsage,
+  listSeasonLengthDistribution,
+  listSettingsUpdateFrequency,
+} from '@/lib/actions/growth';
 
 export default async function GrowthPage() {
   await requireAdmin();
 
-  const [signups, wauMau, cohorts, eventTotals] = await Promise.all([
+  const [signups, wauMau, cohorts, eventTotals, photoProof, seasonLengths, settingsUpdates] = await Promise.all([
     listSignupsPerDay(90),
     listWauMau(26),
     listRetentionCohorts(12),
     listLifecycleEventTotals(30),
+    listPhotoProofUsage(90),
+    listSeasonLengthDistribution(26),
+    listSettingsUpdateFrequency(90),
   ]);
 
   const latestWau = wauMau.data?.at(-1);
@@ -80,6 +94,49 @@ export default async function GrowthPage() {
           </p>
         </CardHeader>
         {cohorts.error ? <p className="text-sm text-danger-700">{cohorts.error}</p> : <RetentionCohortGrid rows={cohorts.data ?? []} />}
+      </Card>
+
+      <div className="flex flex-col gap-2 pt-2">
+        <h2 className="text-[20px] font-extrabold tracking-[-0.02em] text-espresso-950">Frequency of use</h2>
+        <p className="max-w-[900px] text-[13px] leading-[1.6] text-espresso-500">
+          How often specific features actually get used. Share clicks aren&apos;t charted here since the share buttons are currently
+          hidden (SHARE_BUTTONS_ENABLED is off) &mdash; check the event totals strip above once that changes, it&apos;ll pick up
+          share_click rows automatically.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-5">
+        <Card>
+          <CardHeader>
+            <h2 className="text-[11px] font-bold tracking-[0.14em] text-espresso-400 uppercase">Photo proof usage</h2>
+            <p className="mt-[3px] text-[12.5px] text-espresso-400">Share of resolved markets with a proof photo attached, excludes voided.</p>
+          </CardHeader>
+          {photoProof.error ? <p className="text-sm text-danger-700">{photoProof.error}</p> : <PhotoProofUsageChart data={photoProof.data ?? []} />}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <h2 className="text-[11px] font-bold tracking-[0.14em] text-espresso-400 uppercase">Season length choice</h2>
+            <p className="mt-[3px] text-[12.5px] text-espresso-400">What groups actually ran, by the week each season started.</p>
+          </CardHeader>
+          {seasonLengths.error ? (
+            <p className="text-sm text-danger-700">{seasonLengths.error}</p>
+          ) : (
+            <SeasonLengthTrendChart rows={seasonLengths.data ?? []} />
+          )}
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <h2 className="text-[11px] font-bold tracking-[0.14em] text-espresso-400 uppercase">Settings change frequency</h2>
+          <p className="mt-[3px] text-[12.5px] text-espresso-400">How often owners save group settings, and how often it touches an advanced field.</p>
+        </CardHeader>
+        {settingsUpdates.error ? (
+          <p className="text-sm text-danger-700">{settingsUpdates.error}</p>
+        ) : (
+          <SettingsUpdateFrequencyChart data={settingsUpdates.data ?? []} />
+        )}
       </Card>
     </>
   );
